@@ -45,3 +45,6 @@
    Commands: BayesLiNGAM.R
 
    Raw data for SEM: FCPC_Bayes.csv
+
+
+ # Please check the licence file on this website.
