@@ -47,4 +47,4 @@
    Raw data for SEM: FCPC_Bayes.csv
 
 
- # Please check the licence file on this website.
+ # Please check the license file on this website.
