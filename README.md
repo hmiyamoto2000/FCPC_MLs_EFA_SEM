@@ -15,22 +15,33 @@
    Commands (python) : Bubblechart.py
    
    Raw data for ELA: ELA_raw.csv; ELA_grouplist.csv
+   
    Raw data for AA: AA_binarized_raw_data.csv
+   
    Raw data for RF and XGBoost: RF_XG_raw_data.csv
+   
    Raw data for Bubblechart.py: ML_mix.xlsx (Zip-stored)
    
 3. CA (correlation network)
+
    Commands: CA.R
+   
    Raw data for CA: FCPC_MLs.txt
 
-4. EFA
+5. EFA
+
    Commands: EFA.R
+   
    Raw data for EFA: FCPC_MLs_AA.csv
 
-5. SEM (including Shapiro-Wilk test)
+7. SEM (including Shapiro-Wilk test)
+
    Commands: SEM.R
+
    Raw data for SEM: FCPC_MLs_AA.csv
 
-6. BayesLiNGAM
+9. BayesLiNGAM
+
    Commands: BayesLiNGAM.R
+
    Raw data for SEM: FCPC_Bayes.csv
