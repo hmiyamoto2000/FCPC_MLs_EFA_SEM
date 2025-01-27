@@ -46,8 +46,8 @@ write(rule_Ap1,"./Result_AA_RF_XG/AA_calculated_data.csv",sep=",")
 #For XGBoost
 library(xgboost)
 FCPC.train <- read.csv("RF_XG_raw_data.csv") # tibble::glimpse() 
-FCPC.test <- read.csv("RF_XG_raw_data.csv") #RF_XG_raw_data.csv
-dim(FCPC.train) 
+FCPC.test <- read.csv("RF_XG_raw_data.csv") ## please use the filename "RF_XG_raw_data.csv", which the test group of pig dataset is summarized as Comp_ThB, to classify into 8 groups
+dim(FCPC.train)
 train.x <- FCPC.train[, 2:24] #dim(FCPC.train)[1] 36 24
 x <- rbind(train.x,FCPC.test[,-1]) 
 
@@ -74,19 +74,36 @@ nround <- 27
 
 bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
 pred <- predict(bst,x[teind,]) 
-pred <- matrix(pred,8,length(pred)/8)　# class (Fish_Con; Fish_Comp; Chicken_Con; Chicken_Comp; Pig_Con; Pig_Comp_ThB; Cattle_Before; Cattle_After)　　
+pred <- matrix(pred,8,length(pred)/8)　# class (Fish_Con; Fish_Comp; Chicken_Con; Chicken_Comp; Pig_Con; Pig_Comp_ThB; Cattle_Con; Cattle_ThB)　　
 pred <- t(pred)
 colnames(pred)<-c("FE_Control","FE_Test","CW_Control","CW_Test","PK_Control","PK_Test","KC_Control","KC_Test") 
 
-head(pred,8) #8
+head(pred,8) #8 group/class
 
+param <- list("objective" = "multi:softmax", # modify the function "multi:softmax"
+              "eval_metric" = "mlogloss", 
+              "num_class" = 8 #class_No.
+)
+
+set.seed(131)
+nround <- 27
+bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
+pred <- predict(bst,x[teind,])
+
+#8 groups
 x_1_f <- FCPC.test[,1]
 for(i in 1:length(pred)){
-  if(pred[i]==0) {pred[i]="Control"}　#Species Control Test
+  if(pred[i]==0) {pred[i]="Control"}
   else if(pred[i]==1) {pred[i]="Test"}
+  else if(pred[i]==2) {pred[i]="Control"}
+  else if(pred[i]==3) {pred[i]="Test"}
+  else if(pred[i]==4) {pred[i]="Control"}
+  else if(pred[i]==5) {pred[i]="Test"}
+  else if(pred[i]==6) {pred[i]="Control"}
+  else if(pred[i]==7) {pred[i]="Test"}
 }
 
-table(x_1_f,pred)
+table(x_1_f,pred) # Please check 100% accuracy rate
 
 sink('./Result_AA_RF_XG/XGboost_pre_x_1_f.txt', append = TRUE)
 print (table(x_1_f,pred))
@@ -112,14 +129,13 @@ train.x<- FCPC.train[,2:24] #dim(FCPC.train) [1]  8 74
 train.y<-as.factor(FCPC.train[,1])
 model.rf<-tuneRF(train.x,train.y,doBest=T)
 pred<-predict(model.rf,FCPC.test[,2:24]) #dim(FCPC.train) [1]  8 74
-table(FCPC.test[,1],pred)
+table(FCPC.test[,1],pred) # Please check 100% accuracy rate
+rf_pred <- table(FCPC.test[,1],pred) 
+write.csv(rf_pred,"./Result_AA_RF_XG/randomForest_pred.csv")
+
 print(model.rf$importance /sum(model.rf$importance))
 
 write.csv(print(model.rf$importance /sum(model.rf$importance)),"randomForest_raw.csv")
-
-rf_pred <- table(FCPC.test[,1],pred)
-write.csv(rf_pred,"./Result_AA_RF_XG/randomForest_pred.csv")
-
 FCPC.test_n <- cbind(y_1, train.x)
 
 set.seed(22)
@@ -139,4 +155,4 @@ dev.off()
 
 #Make the file (ML_mix.xlsx) containing the values of components selected by AA,RF, and XGBoost
 #Use python to illustrate the Bubble chart(Fig.4a) 
-#Bubblechart.py (load ML_mix.xlsx)
+#"Bubblechart.py" (load "ML_mix_new.xlsx") #please use the file for classification of 8 groups
