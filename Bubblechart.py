@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import openpyxl as xl
 
 # Load excel file
-df=xl.load_workbook('ML_mix.xlsx')
+df=xl.load_workbook('ML_mix_new.xlsx')
 sheet = df['MLmix']
 
 # Load cell values
