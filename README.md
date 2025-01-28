@@ -1,6 +1,6 @@
 # FCPC_MLs_EFA_SEM
 [![DOI](https://zenodo.org/badge/892327534.svg)](https://doi.org/10.5281/zenodo.14207434)
-#This site contains the following commands and their data
+#The following commands and their data is contained :
 1. MLs (ELA,AA,RF, and XGBoost)
 2. CA (correlation network)
 3. EFA
