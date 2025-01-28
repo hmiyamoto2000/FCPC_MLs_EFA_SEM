@@ -90,7 +90,7 @@ nround <- 27
 bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
 pred <- predict(bst,x[teind,])
 
-#8 groups
+#8 groups (Group_8 in Fig.S11)
 x_1_f <- FCPC.test[,1]
 for(i in 1:length(pred)){
   if(pred[i]==0) {pred[i]="Control"}
