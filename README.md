@@ -12,7 +12,7 @@
 
    Commands (R) : MLs.R (classification for 8 groups) / MLs_9groups_for_RF_and_XGBoost.R (classification for 9 groups containing Pig_ThB)
    
-   Commands (python) : Bubblechart.py
+   Commands (python) : Bubblechart.py　(classification for 8 groups) / Bubblechart_9groups.py (classification for 9 groups containing Pig_ThB) 
    
    Raw data for ELA: ELA_raw.csv; ELA_grouplist.csv
    
