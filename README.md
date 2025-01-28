@@ -1,11 +1,11 @@
 # FCPC_MLs_EFA_SEM
 [![DOI](https://zenodo.org/badge/892327534.svg)](https://doi.org/10.5281/zenodo.14207434)
 #The following commands and their data is contained :
-1. MLs (ELA,AA,RF, and XGBoost)
-2. CA (correlation network)
-3. EFA
-4. SEM (including Shapiro-Wilk test)
-5. BayesLiNGAM
+1. MLs (ELA,AA,RF, and XGBoost) #Abbreviations: MLs, Machine learning algorithms; ELA, energy landscape analysis; AA, Association analysis; RF, random forest; and XGBoost, eXtreme Gradient Boosting.
+2. CA (correlation network) #Abbreviations: CA, correlation analysis.
+3. EFA #Abbreviations: EFA, exploratory factor analysis.
+4. SEM (including Shapiro-Wilk test) #Abbreviations: SEM, structural equation modeling.
+5. BayesLiNGAM #Abbreviations: BayesLiNGAM, Bayesian score-based approach for LiNGAM (a linear non-Gaussian acyclic model for causal discovery).
 
 #Individual Explanation
 1. MLs (ELA,AA,RF, and XGBoost)
