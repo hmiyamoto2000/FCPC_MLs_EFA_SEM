@@ -20,7 +20,7 @@
    
    Raw data for RF and XGBoost: RF_XG_raw_data.csv (classification for 8 groups) / RF_XG_raw_data_9groups.csv(classification for 9 groups containing Pig_ThB)
    
-   Raw data for Bubblechart.py: ML_mix.xlsx (Zip-stored) (original data only)(classification for 8 groups) / ML_mix_new.xlsx (Zip-stored) (new file) (classification for 8 groups and/or 9 groups)
+   Raw data for Bubblechart.py: ML_mix.xlsx (Zip-stored) (original data only)(classification for 8 groups) / ML_mix_new.xlsx (Zip-stored) (new file) (sheet_name="ML_mix_9groups", classification for 9 groups)
    
 3. CA (correlation network)
 
