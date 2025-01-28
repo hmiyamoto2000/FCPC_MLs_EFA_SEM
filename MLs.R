@@ -155,4 +155,4 @@ dev.off()
 
 #Make the file (ML_mix.xlsx) containing the values of components selected by AA,RF, and XGBoost
 #Use python to illustrate the Bubble chart(Fig.4a) 
-#"Bubblechart.py" (load the sheet name "ML_mix" in "ML_mix.xlsx") #please use the file for classification of 8 groups
+#"Bubblechart.py" (load the sheet name 'MLmix' in 'ML_mix.xlsx') #please use the file for classification of 8 groups
