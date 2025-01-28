@@ -125,10 +125,10 @@ write.csv(print(imp),"./Result_AA_RF_XG/XGBoostgraph_raw.csv")
 #For RF
 library(randomForest)
 set.seed(131)
-train.x<- FCPC.train[,2:24] #dim(FCPC.train) [1]  8 74
+train.x<- FCPC.train[,2:24] #dim(FCPC.train) [1]  36 24
 train.y<-as.factor(FCPC.train[,1])
 model.rf<-tuneRF(train.x,train.y,doBest=T)
-pred<-predict(model.rf,FCPC.test[,2:24]) #dim(FCPC.train) [1]  8 74
+pred<-predict(model.rf,FCPC.test[,2:24]) #dim(FCPC.train) [1]  36 24
 table(FCPC.test[,1],pred) # Please check 100% accuracy rate
 rf_pred <- table(FCPC.test[,1],pred) 
 write.csv(rf_pred,"./Result_AA_RF_XG/randomForest_pred.csv")
@@ -145,9 +145,9 @@ print(varImpPlot(model))
 
 write.csv(print(varImpPlot(model)),"./Result_AA_RF_XG/randomForest_pred_importance_Gini.csv")
 
-par(mar=c(100, 20, 30, 40)) #par(oma = c(3, 3, 3, 2))
+par(mar=c(100, 20, 30, 40)) 
 rpp2 <- varImpPlot(model)
-varFileName <- paste("./Result_AA_RF_XG/randomforest_tree_var.png",sep="") #フォルダの位置確認
+varFileName <- paste("./Result_AA_RF_XG/randomforest_tree_var.png",sep="") 
 par(mar=c(100, 20, 30, 600)) 
 png(file=varFileName, res=125, w=750, h=750)
 rpp2 <- varImpPlot(model)
@@ -155,4 +155,4 @@ dev.off()
 
 #Make the file (ML_mix.xlsx) containing the values of components selected by AA,RF, and XGBoost
 #Use python to illustrate the Bubble chart(Fig.4a) 
-#"Bubblechart.py" (load "ML_mix_new.xlsx") #please use the file for classification of 8 groups
+#"Bubblechart.py" (load the sheet name "ML_mix" in "ML_mix.xlsx") #please use the file for classification of 8 groups
