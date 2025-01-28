@@ -100,8 +100,8 @@ for(i in 1:length(pred)){
   else if(pred[i]==4) {pred[i]="Control"}
   else if(pred[i]==5) {pred[i]="Test"}
   else if(pred[i]==6) {pred[i]="Control"}
-  else if(pred[i]==7) {pred[i]="Test"} # Pig_ThB (PK_ThB)
-  else if(pred[i]==8) {pred[i]="Test"}
+  else if(pred[i]==7) {pred[i]="Test"} # Pig_Comp (PK_Comp)
+  else if(pred[i]==8) {pred[i]="Test"} # Pig_ThB (PK_ThB)
 }
 
 table(x_1_f,pred) # Please check 100% accuracy rate
