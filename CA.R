@@ -6,7 +6,7 @@ dir.create("./CA_result", showWarnings = TRUE, recursive = FALSE, mode = "0777")
 #File name: FCPC_MLs.txt
 d <- read.delim("FCPC_MLs.txt", header=TRUE, row.name=1, sep="\t", fileEncoding="UTF-8",check.names=F)
 d$name <- NULL
-dat_t <- t(d)
+dat_t <- t(d) #The following commands are based on the guidance of Dr.Shigeharu Moriya,one of the co-researchers.
 no_zero<-subset(d,apply(d, 1, sum)>0)
 dat_spearman<-cor(dat_t,dat_t,method="spearman")
 write.csv(dat_spearman, "./CA_result/spearman_Pra.csv")
