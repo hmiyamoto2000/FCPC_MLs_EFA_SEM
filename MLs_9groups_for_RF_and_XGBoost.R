@@ -76,7 +76,7 @@ bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
 pred <- predict(bst,x[teind,]) 
 pred <- matrix(pred,9,length(pred)/9)　# class (Fish_Con; Fish_Comp; Chicken_Con; Chicken_Comp; Pig_Con; Pig_Comp; Pig_ThB; Cattle_Con; Cattle_ThB)　　
 pred <- t(pred)
-colnames(pred)<-c("FE_Control","FE_Test","CW_Control","CW_Test","PK_Control","PK_Compost","PK_ThB","KC_Control","KC_Test") 
+colnames(pred)<-c("CW_Control","CW_Test","FE_Control","FE_Test","KC_Control","KC_Test","PK_Control","PK_Compost","PK_ThB") 
 
 head(pred,9) # 9 group/class
 
