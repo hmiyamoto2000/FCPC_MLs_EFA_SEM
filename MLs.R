@@ -70,7 +70,7 @@ cv.nround <- 100 #search
 bst.cv <- xgb.cv(param=param, data = x[trind,], label = y,  nfold = k, nrounds=cv.nround)
 
 set.seed(131)
-nround <- 27
+nround <- 28
 
 bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
 pred <- predict(bst,x[teind,]) 
