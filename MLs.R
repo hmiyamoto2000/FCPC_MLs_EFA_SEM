@@ -163,15 +163,16 @@ write.csv(rf_pred_t_1,"./Result_AA_RF_XG/randomForest_pred2.csv") #to check
 print(model.rf$importance /sum(model.rf$importance))
 
 write.csv(print(model.rf$importance /sum(model.rf$importance)),"randomForest_raw.csv")
-FCPC.test_n <- cbind(y_1, train.x)
 
 set.seed(22)
 model = randomForest(y_1 ~ ., data = test.x, mtry=4, importance = TRUE, proximity = TRUE) # the number of mtry with minimum error based on the function tunRF (doBest=TRUE as parameter)
 print(model)
 print(varImpPlot(model))
+
+FCPC.test_n <- cbind(y_1, test.x) #to check
   
 set.seed(22)
-model_t = randomForest(y_1 ~ ., data = test.x, importance = TRUE, proximity = TRUE)
+model_t = randomForest(y_1 ~ ., data = test.x, importance = TRUE, proximity = TRUE) #to check
 print(model_t)
 print(varImpPlot(model_t))
 
