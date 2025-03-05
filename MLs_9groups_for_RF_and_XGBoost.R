@@ -53,7 +53,7 @@ x <- rbind(train.x,FCPC.test[,-1])
 
 y_0 <- c(FCPC.train$Species)
 y_1 <- as.factor(y_0)
-y <- as.integer(y_1)-1
+y <- as.integer(y_1)-1 #caution the order of list no.
 
 x <- as.matrix(x)
 trind <- 1:length(y) 
@@ -70,7 +70,7 @@ cv.nround <- 100 #search
 bst.cv <- xgb.cv(param=param, data = x[trind,], label = y,  nfold = k, nrounds=cv.nround)
 
 set.seed(131)
-nround <- 27
+nround <- 27 # based on the above bst.cv
 
 bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
 pred <- predict(bst,x[teind,]) 
@@ -80,15 +80,27 @@ colnames(pred)<-c("CW_Control","CW_Test","FE_Control","FE_Test","KC_Control","KC
 
 head(pred,9) # 9 group/class
 
+# preparation of test dataset
+test.x <- FCPC.test[, 2:24] 
+x_t <- rbind(test.x,FCPC.test[,-1]) 
+
+y_0_t <- c(FCPC.test$Species)
+y_1_t <- as.factor(y_0_t)
+y_t <- as.integer(y_1_t)-1
+
+x_t <- as.matrix(x_t)
+trind_t <- 1:length(y_t) 
+teind_t <- (nrow(test.x)+1):nrow(x_t) 
+
 param <- list("objective" = "multi:softmax", # modify the function "multi:softmax"
               "eval_metric" = "mlogloss", 
               "num_class" = 9 #class_No.
 )
 
 set.seed(131)
-nround <- 27
-bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
-pred <- predict(bst,x[teind,])
+nround <- 27 # based on the above bst.cv
+bst_t <- xgboost(param=param, data = x_t[trind_t,], label = y, nrounds=nround)
+pred_t <- predict(bst_t,x_t[teind_t,])
 
 #9 groups (for Group_9 in Fig.S11)
 x_1_f <- FCPC.test[,1]
@@ -104,15 +116,15 @@ for(i in 1:length(pred)){
   else if(pred[i]==8) {pred[i]="Test"} # Pig_ThB (PK_ThB)
 }
 
-table(x_1_f,pred) # Please check 100% accuracy rate
+table(x_1_f,pred_t) # Please check 100% accuracy rate as classification of confusion matrix
 
 sink('./Result_AA_RF_XG/XGboost_pre_x_1_f.txt', append = TRUE)
-print (table(x_1_f,pred))
+print (table(x_1_f,pred_t))
 sink()
 
-write.csv(table(x_1_f,pred),"./Result_AA_RF_XG/XGboost_pre_x_1_f.csv")
+write.csv(table(x_1_f,pred_t),"./Result_AA_RF_XG/XGboost_pre_x_1_f.csv")
 
-imp<-xgb.importance(names(y_1),model=bst)
+imp<-xgb.importance(names(y_1),model=bst_t)
 print(imp)
 xgb.plot.importance(imp) 
 
@@ -129,22 +141,43 @@ set.seed(131)
 train.x<- FCPC.train[,2:24] #dim(FCPC.train) [1]  36 24
 train.y<-as.factor(FCPC.train[,1])
 model.rf<-tuneRF(train.x,train.y,doBest=T)
-pred<-predict(model.rf,FCPC.test[,2:24]) #dim(FCPC.train) [1]  36 24
-table(FCPC.test[,1],pred) # Please check 100% accuracy rate
-rf_pred <- table(FCPC.test[,1],pred) 
-write.csv(rf_pred,"./Result_AA_RF_XG/randomForest_pred.csv")
+
+sink('./Result_AA_RF_XG/randomforest_model_rf.txt', append = TRUE)
+print (model.rf)
+sink()
+
+#preparation of test dataset
+dim(FCPC.test)
+test.x<-FCPC.test[,2:24] #dim(FCPC.test) [1]  36 24
+pred_t<-predict(model.rf,test.x)
+table(FCPC.train[,1],pred_t) # Please check 100% accuracy rate
+rf_pred_t <- table(FCPC.train[,1],pred_t) 
+write.csv(rf_pred_t,"./Result_AA_RF_XG/randomForest_pred1.csv")
+
+pred_t_1<-predict(model.rf,FCPC.test[,2:24]) #dim(FCPC.test) [1]  36 24
+table(FCPC.test[,1],pred_t_1) # Please check 100% accuracy rate
+rf_pred_t_1 <- table(FCPC.test[,1],pred_t_1) 
+write.csv(rf_pred_t_1,"./Result_AA_RF_XG/randomForest_pred2.csv") #to check
 
 print(model.rf$importance /sum(model.rf$importance))
 
 write.csv(print(model.rf$importance /sum(model.rf$importance)),"randomForest_raw.csv")
-FCPC.test_n <- cbind(y_1, train.x)
 
 set.seed(22)
-model = randomForest(y_1 ~ ., data = FCPC.test_n, importance = TRUE, proximity = TRUE)
+model = randomForest(y_1 ~ ., data = test.x, mtry=4, importance = TRUE, proximity = TRUE) # the number of mtry with minimum error based on the function tunRF (doBest=TRUE as parameter)
 print(model)
 print(varImpPlot(model))
 
-write.csv(print(varImpPlot(model)),"./Result_AA_RF_XG/randomForest_pred_importance_Gini.csv")
+write.csv(print(varImpPlot(model)),"./Result_AA_RF_XG/randomForest_pred_importance_Gini.csv") 
+  
+FCPC.test_n <- cbind(y_1, test.x) #to check
+  
+set.seed(22)
+model_t = randomForest(y_1 ~ ., data = FCPC.test_n, importance = TRUE, proximity = TRUE) #to check
+print(model_t)
+print(varImpPlot(model_t))
+
+write.csv(print(varImpPlot(model_t)),"./Result_AA_RF_XG/randomForest_pred_importance_Gini_model_t.csv") #to check
 
 par(mar=c(100, 20, 30, 40)) 
 rpp2 <- varImpPlot(model)
