@@ -53,7 +53,8 @@ x <- rbind(train.x,FCPC.test[,-1])
 
 y_0 <- c(FCPC.train$Species)
 y_1 <- as.factor(y_0)
-y <- as.integer(y_1)-1
+y <- as.integer(y_1)-1 #caution the order of list as 2,3,0,1,6,7,4,5 
+#2,CW_control(Chicken_Con);3,CW_test(Chicken_Comp);0,FE_control(Fish_Con);1,FE_test(Fish_Comp);6,PK_control(Pig_Con);7,PK_test(Pig_Comp_ThB);4,KC_control(Cattel_Con);5,KC_test(Cattle_ThB)
 
 x <- as.matrix(x)
 trind <- 1:length(y) 
@@ -70,15 +71,28 @@ cv.nround <- 100 #search
 bst.cv <- xgb.cv(param=param, data = x[trind,], label = y,  nfold = k, nrounds=cv.nround)
 
 set.seed(131)
-nround <- 28
+nround <- 28 # or 27 based on the above bst.cv
 
 bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
 pred <- predict(bst,x[teind,]) 
 pred <- matrix(pred,8,length(pred)/8)　# class (Fish_Con; Fish_Comp; Chicken_Con; Chicken_Comp; Pig_Con; Pig_Comp_ThB; Cattle_Con; Cattle_ThB)　　
 pred <- t(pred)
 colnames(pred)<-c("CW_Control","CW_Test","FE_Control","FE_Test","KC_Control","KC_Test","PK_Control","PK_Test") 
+#2,CW_control(Chicken_Con);3,CW_test(Chicken_Comp);0,FE_control(Fish_Con);1,FE_test(Fish_Comp);6,PK_control(Pig_Con);7,PK_test(Pig_Comp_ThB);4,KC_control(Cattel_Con);5,KC_test(Cattle_ThB)
 
 head(pred,8) #8 group/class
+
+# preparation of test dataset
+test.x <- FCPC.test[, 2:24] 
+x_t <- rbind(test.x,FCPC.test[,-1]) 
+
+y_0_t <- c(FCPC.test$Species)
+y_1_t <- as.factor(y_0_t)
+y_t <- as.integer(y_1_t)-1
+
+x_t <- as.matrix(x_t)
+trind_t <- 1:length(y_t) 
+teind_t <- (nrow(test.x)+1):nrow(x_t) 
 
 param <- list("objective" = "multi:softmax", # modify the function "multi:softmax"
               "eval_metric" = "mlogloss", 
@@ -86,32 +100,32 @@ param <- list("objective" = "multi:softmax", # modify the function "multi:softma
 )
 
 set.seed(131)
-nround <- 27
-bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
-pred <- predict(bst,x[teind,])
+nround <- 28 # or 27 based on the above bst.cv
+bst_t <- xgboost(param=param, data = x_t[trind_t,], label = y, nrounds=nround)
+pred_t <- predict(bst_t,x_t[teind_t,])
 
 #8 groups (Group_8 in Fig.S11)
 x_1_f <- FCPC.test[,1]
-for(i in 1:length(pred)){
-  if(pred[i]==0) {pred[i]="Control"}
-  else if(pred[i]==1) {pred[i]="Test"}
-  else if(pred[i]==2) {pred[i]="Control"}
-  else if(pred[i]==3) {pred[i]="Test"}
-  else if(pred[i]==4) {pred[i]="Control"}
-  else if(pred[i]==5) {pred[i]="Test"}
-  else if(pred[i]==6) {pred[i]="Control"}
-  else if(pred[i]==7) {pred[i]="Test"} #Pig_Comp_ThB
+for(i in 1:length(pred_t)){
+  if(pred_t[i]==0) {pred_t[i]="Control"}
+  else if(pred_t[i]==1) {pred_t[i]="Test"}
+  else if(pred_t[i]==2) {pred_t[i]="Control"}
+  else if(pred_t[i]==3) {pred_t[i]="Test"}
+  else if(pred_t[i]==4) {pred_t[i]="Control"}
+  else if(pred_t[i]==5) {pred_t[i]="Test"}
+  else if(pred_t[i]==6) {pred_t[i]="Control"}
+  else if(pred_t[i]==7) {pred_t[i]="Test"} #Pig_Comp_ThB
 }
 
-table(x_1_f,pred) # Please check 100% accuracy rate
+table(x_1_f,pred_t) # Please check 100% accuracy rate
 
 sink('./Result_AA_RF_XG/XGboost_pre_x_1_f.txt', append = TRUE)
-print (table(x_1_f,pred))
+print (table(x_1_f,pred_t))
 sink()
 
-write.csv(table(x_1_f,pred),"./Result_AA_RF_XG/XGboost_pre_x_1_f.csv")
+write.csv(table(x_1_f,pred_t),"./Result_AA_RF_XG/XGboost_pre_x_1_f.csv")
 
-imp<-xgb.importance(names(y_1),model=bst)
+imp<-xgb.importance(names(y_1),model=bst_t)
 print(imp)
 xgb.plot.importance(imp) 
 
@@ -128,10 +142,23 @@ set.seed(131)
 train.x<- FCPC.train[,2:24] #dim(FCPC.train) [1]  36 24
 train.y<-as.factor(FCPC.train[,1])
 model.rf<-tuneRF(train.x,train.y,doBest=T)
-pred<-predict(model.rf,FCPC.test[,2:24]) #dim(FCPC.train) [1]  36 24
-table(FCPC.test[,1],pred) # Please check 100% accuracy rate
-rf_pred <- table(FCPC.test[,1],pred) 
-write.csv(rf_pred,"./Result_AA_RF_XG/randomForest_pred.csv")
+
+sink('./Result_AA_RF_XG/randomforest_model_rf.txt', append = TRUE)
+print (model.rf)
+sink()
+
+#preparation of test dataset
+dim(FCPC.test)
+test.x<-FCPC.test[,2:24] #dim(FCPC.test) [1]  36 24
+pred_t<-predict(model.rf,test.x)
+table(FCPC.train[,1],pred_t) # Please check 100% accuracy rate
+rf_pred_t <- table(FCPC.train[,1],pred_t) 
+write.csv(rf_pred_t,"./Result_AA_RF_XG/randomForest_pred1.csv")
+
+pred_t_1<-predict(model.rf,FCPC.test[,2:24]) #dim(FCPC.test) [1]  36 24
+table(FCPC.test[,1],pred_t_1) # Please check 100% accuracy rate
+rf_pred_t_1 <- table(FCPC.test[,1],pred_t_1) 
+write.csv(rf_pred_t_1,"./Result_AA_RF_XG/randomForest_pred2.csv") #to check
 
 print(model.rf$importance /sum(model.rf$importance))
 
@@ -139,11 +166,16 @@ write.csv(print(model.rf$importance /sum(model.rf$importance)),"randomForest_raw
 FCPC.test_n <- cbind(y_1, train.x)
 
 set.seed(22)
-model = randomForest(y_1 ~ ., data = FCPC.test_n, importance = TRUE, proximity = TRUE)
+model = randomForest(y_1 ~ ., data = test.x, mtry=4, importance = TRUE, proximity = TRUE) # the number of mtry with minimum error based on the function tunRF (doBest=TRUE as parameter)
 print(model)
 print(varImpPlot(model))
+  
+set.seed(22)
+model_t = randomForest(y_1 ~ ., data = test.x, importance = TRUE, proximity = TRUE)
+print(model_t)
+print(varImpPlot(model_t))
 
-write.csv(print(varImpPlot(model)),"./Result_AA_RF_XG/randomForest_pred_importance_Gini.csv")
+write.csv(print(varImpPlot(model_t)),"./Result_AA_RF_XG/randomForest_pred_importance_Gini_model_t.csv") #to check
 
 par(mar=c(100, 20, 30, 40)) 
 rpp2 <- varImpPlot(model)
