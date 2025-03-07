@@ -44,6 +44,7 @@ write(rule_Ap1,"./Result_AA_RF_XG/AA_calculated_data.csv",sep=",")
 #For RF and XGBoost (Fig.4a) 
 #Read the raw data file for AA-selected components
 #For XGBoost
+options(na.action='na.pass') # for missing value
 library(xgboost)
 FCPC.train <- read.csv("RF_XG_raw_data.csv") # tibble::glimpse() 
 FCPC.test <- read.csv("RF_XG_raw_data.csv") ## please use the filename "RF_XG_raw_data.csv", which the test group of pig dataset is summarized as Comp_ThB, to classify into 8 groups
@@ -71,7 +72,7 @@ cv.nround <- 100 #search
 bst.cv <- xgb.cv(param=param, data = x[trind,], label = y,  nfold = k, nrounds=cv.nround)
 
 set.seed(131)
-nround <- 28 # or 27 based on the above bst.cv
+nround <- 28 # or 27 based on the above bst.cv 
 
 bst <- xgboost(param=param, data = x[trind,], label = y, nrounds=nround)
 pred <- predict(bst,x[teind,]) 
