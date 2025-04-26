@@ -12,7 +12,7 @@ sink('./EFA_result/KMO.txt', append = TRUE)
 print (k_d)
 sink()
 
-par("mar"=c(1,1,1,1))
+#par("mar"=c(1,1,1,1))
 fa.parallel(data, fa = "fa", use = "complete.obs")
 abline(h = 0)
 parallel=fa.parallel(data, fa = "fa", use = "complete.obs")
@@ -40,4 +40,4 @@ sink()
 
 library(heatmaply)
 
-heatmaply(fa(data, nfactors = 8, fm = "minress", rotate = "promax")$loadings,grid_gap = 1,subplot_widths = c(0.3, 0.2),subplot_heights = c(0.20, 0.70))
+heatmaply(fa(data, nfactors = 8, fm = "minres", rotate = "promax")$loadings,grid_gap = 1,subplot_widths = c(0.3, 0.2),subplot_heights = c(0.20, 0.70))
